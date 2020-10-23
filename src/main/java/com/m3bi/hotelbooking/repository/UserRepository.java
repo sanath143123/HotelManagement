@@ -14,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 
 public User findByName(String Name);
 
+//@Query("select count(*) from User where name=:name")	
+public int countFindByName(String Name);
+
 }

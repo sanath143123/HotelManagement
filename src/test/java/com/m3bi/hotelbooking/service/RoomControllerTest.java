@@ -85,7 +85,7 @@ public class RoomControllerTest extends AbstractTest{
 		@Test
 		public void getRoomByHotelId() throws Exception
 		{
-			String uri="/rooms/5300";
+			String uri="/rooms/6600";
 			MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
 				      .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
 				   

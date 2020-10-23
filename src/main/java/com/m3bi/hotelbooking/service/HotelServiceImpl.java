@@ -43,9 +43,19 @@ public class HotelServiceImpl implements IHotelService{
 	{
 		List<Hotel> response =  new ArrayList<>();
 		hotelList.forEach(hotel -> {
+			int count= hotelRepo.countFindByHotel(hotel.getHotelName(), hotel.getPlace());
+			if(count == 0)
+			{
 			hotelRepo.save(hotel);
 			hotel.setStatus("Success");
 			response.add(hotel);
+			}
+			else
+			{
+				hotel.setStatus("Error");
+				hotel.setMessage("Hotel with name and place already exists");
+				response.add(hotel);
+			}
 		});
 		
 		return response;

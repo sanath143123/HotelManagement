@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.m3bi.hotelbooking.model.Room;
 import com.m3bi.hotelbooking.model.RoomBooking;
 import com.m3bi.hotelbooking.model.User;
@@ -26,6 +28,7 @@ public class RoomBookingService implements IRoomBookingService{
 	@Autowired
 	RoomRepository roomRepo;
 	
+
 	@Autowired
 	UserRepository userRepo;
 	
@@ -48,7 +51,8 @@ public class RoomBookingService implements IRoomBookingService{
 			LocalDateTime bookdate= LocalDateTime.now();
 			booking.setBookingDate(bookdate);
 			bookingRepo.save(booking);
-			updateRoom(room.get(), booking.getNoOfRooms());
+			updateRoom(room.get(), booking.getNoOfRooms(),"");
+			if(booking.getBookingstatus().equals("Booked"))
 			updateUser(user.get(), booking.getTotalAmount());
 			    
 			booking.setStatus("success");
@@ -61,34 +65,69 @@ public class RoomBookingService implements IRoomBookingService{
 	
 	private String getStatus(Room room, int count, int bonus)
 	{
-		if(room.getAvailableRooms() >=  count)
+		//String status="";
+		double price= count * room.getPrice();
+		List<String> flag=Lists.newArrayList();
+		if((int)price <= bonus)
 		{
-			   double price= count * room.getPrice();
-			   
-			   if((int)price <= bonus)
-			   {
-				   return "Booked";
-			   }
-			   else if((int)price > bonus)
-				   return "Pending Approval";
+				if(room.getAvailableRooms() >=  count)
+				{
+					return "Booked";
+					   
+				}
+				else
+				{
+					List<RoomBooking> bookingList = bookingRepo.findByRoomid(room.getId(), "Pending_Approval");
+					if(bookingList.size() == 0)
+						return "Pending_Approval";
+					else
+					{
+						
+					flag= bookingList.stream().map((booking) -> {
+							Optional<Room> ExistingRoom = roomRepo.findById(room.getId());
+						
+								if(ExistingRoom.get().getAvailableRooms() <= count)
+								{
+									booking.setBookingstatus("Cancelled");
+									bookingRepo.save(booking);
+									updateRoom(ExistingRoom.get(),booking.getNoOfRooms(),"Add");
+									
+								}
+								return "Booked";
+												
+						}).collect(Collectors.toList());
+						
+						
+					}
+				}
 		}
 		
-		return "Rooms Not Available";
+		return flag.size() > 0 ? "Booked" : "Pending_Approval";
 		
 		
+		
+		
+		
+	
 		
 	}
 	
-	private void updateRoom(Room room, int count)
+	private void updateRoom(Room room, int count, String action)
 	{
+		if(!action.equals("Add"))
 		room.setAvailableRooms((room.getAvailableRooms() - count) > 0 ? room.getAvailableRooms() - count : 0);
+		else
+		room.setAvailableRooms(room.getAvailableRooms() + count);	
 		roomRepo.save(room);
 	}
 	
-	private void updateUser(User user, double price)
-	{
-		user.setBonus((user.getBonus() - (int) price) > 0 ? (user.getBonus() - (int) price) : 0 );
-	}
+	
+	  private void updateUser(User user, double price) 
+	  {
+	  user.setBonus((user.getBonus() - (int) price) > 0 ? (user.getBonus() - (int) price) : 0 ); 
+	  userRepo.save(user);
+	  }
+	 
 	
 	@Override
 	public List<RoomBooking> getBookingByHotelid(String id)
@@ -97,4 +136,23 @@ public class RoomBookingService implements IRoomBookingService{
 		
 		
 	}
+	
+	public void updateBookingForUser(User user)
+	{
+		List<RoomBooking> roomBooking = bookingRepo.findByUserid(user.getId(), "Pending_Approval");
+		
+		roomBooking.forEach(booking -> {
+			
+			if(booking.getTotalAmount() <= user.getBonus())
+			{
+				booking.setBookingstatus("Booked");
+				bookingRepo.save(booking);
+				updateUser(user, booking.getTotalAmount());
+			}
+			
+		});
+		
+		
+	}
+	
 }

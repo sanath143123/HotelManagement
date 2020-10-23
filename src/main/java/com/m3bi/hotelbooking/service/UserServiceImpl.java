@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.m3bi.hotelbooking.model.User;
+import com.m3bi.hotelbooking.model.RoomBooking;
+import com.m3bi.hotelbooking.repository.BookingRepository;
 import com.m3bi.hotelbooking.repository.UserRepository;
 
 
@@ -18,6 +20,9 @@ public class UserServiceImpl implements IUserService{
 	
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	IRoomBookingService bookingService;
 	
 	@Override
 	public List<User> getAllUsers()
@@ -32,10 +37,20 @@ public class UserServiceImpl implements IUserService{
 	{
 		List<User> response = new ArrayList<>();
 		userList.forEach(user -> {
+			int count = userRepo.countFindByName(user.getName());
+			if(count == 0)
+			{
+				userRepo.save(user);
+				user.setStatus("Success");
+				response.add(user);
+			}
+			else
+			{
+				user.setStatus("Error");
+				user.setMessage("User already present");
+				response.add(user);
+			}
 			
-		userRepo.save(user);
-		user.setStatus("Success");
-		response.add(user);
 		});
 		
 		return response;
@@ -52,21 +67,32 @@ public class UserServiceImpl implements IUserService{
 			User existingUser = userRepo.findByName(user.getName());
 			if(existingUser.getId() != 0)
 			{
-			existingUser.setBonus(user.getBonus());
+				if(user.getBonus() !=0)
+				{
+			existingUser.setBonus(existingUser.getBonus() + user.getBonus());
 			userRepo.save(existingUser);
-			user.setStatus("Success");
+			
+			bookingService.updateBookingForUser(existingUser);
+			 //List<RoomBooking> roomBooking = bookingRepo.findByUserid(user.getId(), "Pending_Approval");
+			 
+				}
+			existingUser.setStatus("Success");
+			response.add(existingUser);
 			}
 			else
 			{
 				user.setStatus("Error");
 				user.setMessage("User not found");
+				response.add(user);
 			}
-		response.add(user);
+		
 		});
 		
 		return response;
 		
 	}
+	
+	
 	
 	
 	
