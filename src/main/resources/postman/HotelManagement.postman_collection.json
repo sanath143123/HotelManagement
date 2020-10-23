@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "   [ {\r\n        \"name\":\"ravi\",\r\n        \"bonus\": 1000\r\n    },\r\n    {\r\n        \"name\":\"kumar\",\r\n        \"bonus\": 2000\r\n    }\r\n   ]\r\n",
+					"raw": "   [ {\r\n        \"name\":\"ravi\",\r\n        \"bonus\": 1000\r\n    },\r\n    {\r\n        \"name\":\"Rajesh\",\r\n        \"bonus\": 2000\r\n    }\r\n   ]\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -40,7 +40,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8081/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"users"
+					]
 				}
 			},
 			"response": []
@@ -51,7 +60,17 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8081/v1/users/6300",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"users",
+						"6300"
+					]
 				}
 			},
 			"response": []
@@ -111,7 +130,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8081/v1/hotels/{id}",
+					"raw": "http://localhost:8081/v1/hotels/5300",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -120,7 +139,7 @@
 					"path": [
 						"v1",
 						"hotels",
-						"{id}"
+						"5300"
 					]
 				}
 			},
@@ -133,7 +152,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n    {\r\n        \"hotelid\" : 5300,\r\n        \"roomType\" : \"2Beds\",\r\n        \"price\" : 500,\r\n        \"roomCount\" : 5,\r\n        \"availableRooms\" : 5\r\n\r\n    },\r\n     {\r\n        \"hotelid\" : 5300,\r\n        \"roomType\" : \"3Beds\",\r\n        \"price\" : 600,\r\n        \"roomCount\" : 5,\r\n        \"availableRooms\" : 5\r\n\r\n    }\r\n]",
+					"raw": "[\r\n    {\r\n        \"hotelid\" : 6600,\r\n        \"roomType\" : \"2Beds\",\r\n        \"price\" : 600,\r\n        \"roomCount\" : 5,\r\n        \"availableRooms\" : 5\r\n\r\n    },\r\n     {\r\n        \"hotelid\" : 6601,\r\n        \"roomType\" : \"3Beds\",\r\n        \"price\" : 700,\r\n        \"roomCount\" : 5,\r\n        \"availableRooms\" : 5\r\n\r\n    }\r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -161,7 +180,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8081/v1/rooms/5300",
+					"raw": "http://localhost:8081/v1/rooms/6601",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -170,7 +189,7 @@
 					"path": [
 						"v1",
 						"rooms",
-						"5300"
+						"6601"
 					]
 				}
 			},
@@ -223,7 +242,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": "[\r\n    {\r\n        \"userid\": 6300,\r\n        \"hotelid\": 6601,\r\n        \"roomid\": 6751,\r\n        \"noOfRooms\": 2\r\n    }\r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -251,7 +270,46 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "http://localhost:8081/v1/bookings/5300",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"bookings",
+						"5300"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateUser",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[ {\r\n        \"name\":\"ravi\",\r\n        \"bonus\": 1000\r\n    }\r\n   ]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"v1",
+						"users"
+					]
 				}
 			},
 			"response": []
